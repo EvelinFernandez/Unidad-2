@@ -12,6 +12,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
+import sample.Interprete.Compilador;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -59,20 +60,30 @@ public class Controller {
     public void compilar(ActionEvent event ){
         String error="";
         String[] renglones =codeArea.getText().split("\\n");
-        for(int x=0;x<renglones.length;x++){
-            boolean encontro=false;
-            for(int y=0;y<expresiones.length;y++){
-                Pattern p=Pattern.compile(expresiones[y]);
-                Matcher matcher=p.matcher(renglones[x]);
-                if(matcher.matches()){
-                    encontro=true;
-                    y= expresiones.length+1;
+        for(int x=0;x<renglones.length;x++) {
+            boolean encontro = false;
+            for (int y = 0; y < expresiones.length; y++) {
+                Pattern p= Pattern.compile(expresiones[y]);
+                Matcher matcher = p.matcher(renglones[x]);
+                if (matcher.matches()) {
+                    encontro = true;
+                    y = expresiones.length + 1;
                 }
             }
-            if(!encontro){
-                error+= "Error en la Sintaxis de Linea"+(x+1)+"\n";
+            if (!encontro) {
+                error += "Error en la Sintaxis de Linea" + (x + 1) + "\n";
             }
-            consola.setText(error);
+        }
+        consola.setText(error);
+        ////////////Empezar a compilar
+        if(error.equals("")){
+            Compilador compilador=new Compilador();
+            for(int x=0;x<renglones.length;x++){
+                boolean res=compilador.compilar(renglones[x]);
+                if(res){
+                    consola.appendText("\n Error de sintaxis en la linea"+(x+1));
+                }
+            }
         }
     }
 
