@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class TipoToken {
     public static String A="A";
+    public static String a="a";
     public static String B="B";
     public static String C="C";
     public static String D="D";

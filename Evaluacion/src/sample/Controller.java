@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -24,12 +25,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static sample.Configs.Configs.*;
+import static sample.Interprete.TipoToken.arrayToken;
 
 public class Controller {
     @FXML
-    VBox centro;
+    VBox centro, Resultado;
     @FXML
     TextArea consola;
+    @FXML
+    HBox tradu;
     private CodeArea codeArea;
     private ExecutorService executor;
     @FXML protected void initialize(){
@@ -59,6 +63,10 @@ public class Controller {
     }
     public void compilar(ActionEvent event ){
         String error="";
+        long t1=System.currentTimeMillis();
+        consola.setText("");
+        arrayToken.clear();
+        Resultado.getChildren().clear();
         String[] renglones =codeArea.getText().split("\\n");
         for(int x=0;x<renglones.length;x++) {
             boolean encontro = false;
@@ -77,7 +85,7 @@ public class Controller {
         consola.setText(error);
         ////////////Empezar a compilar
         if(error.equals("")){
-            Compilador compilador=new Compilador();
+            Compilador compilador=new Compilador(consola,Resultado, tradu);
             for(int x=0;x<renglones.length;x++){
                 boolean res=compilador.compilar(renglones[x]);
                 if(res){
@@ -85,6 +93,8 @@ public class Controller {
                 }
             }
         }
+        long t2=System.currentTimeMillis();
+        consola.appendText("\n Compilado en "+(t2-t1)+" milisegundos");
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -125,4 +135,6 @@ public class Controller {
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
+
+
 }
